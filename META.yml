@@ -21,6 +21,7 @@ requires:
   File::Slurp: 0
   Test::More: 0
   Test::Output: 1.03
+  Test::Simple: 1
   Text::Hunspell: 2.08
   version: 0
-version: v0.0.3
+version: v0.0.4

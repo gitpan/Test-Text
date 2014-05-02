@@ -1,7 +1,6 @@
 use lib qw( ../lib ); # -*- cperl -*- 
 
 use Test::More;
-use Test::Output;
 use File::Slurp 'read_file';
 
 use Test::Text;
@@ -23,8 +22,7 @@ if ( !-e $text_dir ) {
 
 my $tesxt = new Test::Text $text_dir, $dict_dir;
 
-stdout_like( sub { $tesxt->check();}, qr/ok 154 - station/, "Checking spelling");
-
+$tesxt->check();
 
 done_testing();
 
