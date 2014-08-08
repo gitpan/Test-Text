@@ -7,18 +7,19 @@ use File::Slurp 'read_file';
 use Text::Hunspell;
 use v5.14;
 
-use version; our $VERSION = qv('0.0.4'); # First version elaborated from old one
+use version; our $VERSION = qv('0.1.0'); # Let's try a couple of languages
 
 use base 'Test::Builder::Module';
 
 my $CLASS = __PACKAGE__;
-our $word_re = qr/([\w\'áéíóúÁÉÍÓÚñÑ]+)/;
+our $word_re = qr/([\w\'áéíóúÁÉÍÓÚñÑçÇ]+)/;
 
 # Module implementation here
 sub new {
   my $class = shift;
   my $dir = shift || croak "Need a directory with text" ;
   my $data_dir = shift || croak "No default spelling data directory\n";
+  my $language = shift || "en_US"; # Defaults to English
   my @files = @_ ; # Use all appropriate files in dir by default
   if (!@files ) {
     @files = glob("$dir/*.md $dir/*.txt)");
@@ -34,8 +35,8 @@ sub new {
 
   # Speller declaration
   my $speller = Text::Hunspell->new(
-				  "$data_dir/en_US.aff",    # Hunspell affix file
-				  "$data_dir/en_US.dic"     # Hunspell dictionary file
+				  "$data_dir/$language.aff",    # Hunspell affix file
+				  "$data_dir/$language.dic"     # Hunspell dictionary file
 				   );
   croak if !$speller;
   $self->{'_speller'} = $speller;
@@ -58,7 +59,7 @@ sub check {
   my $tb= $CLASS->builder;
   my $speller = $self->{'_speller'};
   for my $f ( @{$self->files}) {
-    my $file_content =read_file($f);
+    my $file_content= read_file($f);
     my @words = split /\s+/, $file_content;
 
     for my $w (@words) {
@@ -80,12 +81,12 @@ __END__
 
 =head1 NAME
 
-Test::Text - A module for testing 
+Test::Text - A module for testing text files.
 
 
 =head1 VERSION
 
-This document describes Test::Text version 0.0.3
+This document describes Test::Text version 0.1.0
 
 
 =head1 SYNOPSIS
@@ -95,13 +96,16 @@ This document describes Test::Text version 0.0.3
     my $dir = "path/to/text_dir"; 
     my $data = "path/to/data_dir"; 
 
-    my $tesxt = new Test::Text $text_dir, $dict_dir;
+    my $tesxt = new Test::Text $text_dir, $dict_dir; # Defaults to English: en_US and all files
 
-   $tesxt = new Test::Text $text_dir, $dict_dir, $this_file, $that_file;
+    $tesxt = new Test::Text $text_dir, $dict_dir, "en_US", $this_file, $that_file; # Tests only those files 
 
-   $testxt->check(); # spell-checks plain or markdown text in that dir or just passed
+    $tesxt = new Test::Text $text_dir, $dict_dir, "es_ES"; # Uses alternate language 
 
-   $testxt->done_testing(); # all over and out
+    $testxt->check(); # spell-checks plain or markdown text in that dir or just passed
+
+    
+    $testxt->done_testing(); # all over and out
 
 
 =head1 DESCRIPTION
@@ -115,28 +119,30 @@ directory the markdown source.
 This module is a more general text-tester (that's a C<tesxter>) which can be used on any external set of texts.  
 This all came from the idea that L<writing is like software development|https://medium.com/i-m-h-o/6d154a43719c>, which I'm using throughout. 
 
+You will need to install Hunspell and any dictionary you will be using. By default, Hunspell only installs English and a few more (would be hard pressed to tell which ones)
+
 =head1 INTERFACE
 
-=head2 new $dir [, @files]
+=head2 new $text_dir, $data_dir [, $language = 'en_US'] [,  @files]
 
-Creates an object with the novel text inside.  There is no default for the dir since it's supposed to be external. If an array of files is given, only those are used and not all the files inside the directory.
+Creates an object with the novel text inside.  There is no default for the dir since it is supposed to be external. If an array of files is given, only those are used and not all the files inside the directory; these files will be prepended the C<$text_dir> to get the whole path.
 
 =head2 files
 
-Returns the files it's using
+Returns the files it will be checking.
 
 =head2 dir
 
-Returns the dir the source file is in. Since this is managed from the
+Returns the dir the source files are in. Since this is managed from the
 object, it is useful for other functions.
 
 =head2 check
 
-Check defined files
+Check files. This is the only function you will have to call from from your test script.
 
 =head2 done_testing
 
-Called after all tests have been performed
+Called after all tests have been performed.
 
 =head1 DEPENDENCIES
 

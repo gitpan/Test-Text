@@ -1,10 +1,10 @@
 {
-   "abstract" : "A module for testing ",
+   "abstract" : "A module for testing text files.",
    "author" : [
       "JJ Merelo <jj@merelo.net>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "ExtUtils::MakeMaker version 6.66, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "ExtUtils::MakeMaker version 6.64, CPAN::Meta::Converter version 2.132140",
    "license" : [
       "unknown"
    ],
@@ -42,5 +42,5 @@
       }
    },
    "release_status" : "stable",
-   "version" : "v0.0.4"
+   "version" : "v0.1.0"
 }

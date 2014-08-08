@@ -1,9 +1,3 @@
-2014-05-02  Juan J. Merelo Guervós  <jjmerelo@gmail.com>
-
-	* lib/Test/Text.pm (done_testing): This version includes this
-	function, as well as other from Test::Builder. Now it's a bit more
-	cooperative. 
-
 2014-05-01  Juan J. Merelo Guervós  <jjmerelo@gmail.com>
 
 	* MANIFEST: Changing manifest for the new version

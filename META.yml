@@ -1,5 +1,5 @@
 ---
-abstract: 'A module for testing '
+abstract: 'A module for testing text files.'
 author:
   - 'JJ Merelo <jj@merelo.net>'
 build_requires:
@@ -7,7 +7,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 0
 dynamic_config: 1
-generated_by: 'ExtUtils::MakeMaker version 6.66, CPAN::Meta::Converter version 2.120921'
+generated_by: 'ExtUtils::MakeMaker version 6.64, CPAN::Meta::Converter version 2.132140'
 license: unknown
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -24,4 +24,4 @@ requires:
   Test::Simple: 1
   Text::Hunspell: 2.08
   version: 0
-version: v0.0.4
+version: v0.1.0
