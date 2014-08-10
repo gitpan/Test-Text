@@ -13,7 +13,7 @@ text/es/texto.md
 text/README.md
 data/en_US.aff		English affixes 
 data/en_US.dic		... and dicts
-data/es.aff		Spanish affixes 
-data/es.dic		... and dictionnary
+data/Spanish.aff		Spanish affixes 
+data/Spanish.dic		... and dictionnary
 META.yml                                 Module YAML meta-data (added by MakeMaker)
 META.json                                Module JSON meta-data (added by MakeMaker)

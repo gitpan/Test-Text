@@ -5,14 +5,16 @@ use strict;
 use Carp;
 use File::Slurp 'read_file';
 use Text::Hunspell;
+use Encode::Encoder qw(encoder);
 use v5.14;
 
-use version; our $VERSION = qv('0.1.0'); # Let's try a couple of languages
+use version; our $VERSION = qv('0.1.2'); # One with an Spanish dictionary that actually works.
 
 use base 'Test::Builder::Module';
 
 my $CLASS = __PACKAGE__;
 our $word_re = qr/([\w\'áéíóúÁÉÍÓÚñÑçÇ]+)/;
+our @EXPORT= 'just_check';
 
 # Module implementation here
 sub new {
@@ -22,7 +24,7 @@ sub new {
   my $language = shift || "en_US"; # Defaults to English
   my @files = @_ ; # Use all appropriate files in dir by default
   if (!@files ) {
-    @files = glob("$dir/*.md $dir/*.txt)");
+    @files = glob("$dir/*.md $dir/*.txt $dir/*.markdown)");
   } else {
     @files = map( "$dir/$_", @files );
   }
@@ -65,9 +67,17 @@ sub check {
     for my $w (@words) {
       my ($stripped_word) = ( $w =~ $word_re );
       next if !$stripped_word;
-      $tb->ok( $speller->check( $stripped_word),  " $stripped_word");
+      $tb->ok( $speller->check( encoder($stripped_word)->latin1),  $stripped_word);
     }
   }
+}
+
+sub just_check {
+    my $dir = shift || croak "Need a directory with text" ;
+    my $data_dir = shift || croak "No default spelling data directory\n";
+    my $language = shift || "en_US"; # Defaults to English
+    my $tesxt = new Test::Text $dir, $data_dir, $language, @_;
+    $tesxt->check();
 }
 
 sub done_testing {
@@ -81,12 +91,12 @@ __END__
 
 =head1 NAME
 
-Test::Text - A module for testing text files.
+Test::Text - A module for testing text files for spelling and (maybe) more. 
 
 
 =head1 VERSION
 
-This document describes Test::Text version 0.1.0
+This document describes Test::Text version 0.1.2
 
 
 =head1 SYNOPSIS
@@ -104,7 +114,7 @@ This document describes Test::Text version 0.1.0
 
     $testxt->check(); # spell-checks plain or markdown text in that dir or just passed
 
-    
+    just_check( $dir, $data ); # Exported by default, procedural interface
     $testxt->done_testing(); # all over and out
 
 
@@ -119,13 +129,28 @@ directory the markdown source.
 This module is a more general text-tester (that's a C<tesxter>) which can be used on any external set of texts.  
 This all came from the idea that L<writing is like software development|https://medium.com/i-m-h-o/6d154a43719c>, which I'm using throughout. 
 
-You will need to install Hunspell and any dictionary you will be using. By default, Hunspell only installs English and a few more (would be hard pressed to tell which ones)
+You will need to install Hunspell and any dictionary you will be
+    using. By default, Hunspell install quite a few and you can also
+    use the dictionaries from C<myspell>. Problem is
+    L<Text::Hunspell>, which is the module used for spelling, does not
+    work correctly with dictionaries using Latin1 codification, which
+    are the ones supplied by default with Hunspell. For Spanish, for
+    instance, you will have to obtain your own dictionary with UTF8
+    codification, with the ones supplied with L<Sublime
+    Text|https://github.com/SublimeText/Dictionaries/> being a very
+    good option. The Spanish files obtained there are included in this
+    module for testing purposes.
 
 =head1 INTERFACE
 
 =head2 new $text_dir, $data_dir [, $language = 'en_US'] [,  @files]
 
-Creates an object with the novel text inside.  There is no default for the dir since it is supposed to be external. If an array of files is given, only those are used and not all the files inside the directory; these files will be prepended the C<$text_dir> to get the whole path.
+Creates an object with link to text and markdown files identified by
+    extension.  There is no default for
+    the dir since it is supposed to be external. If an array of files
+    is given, only those are used and not all the files inside the
+    directory; these files will be prepended the C<$text_dir> to get
+    the whole path. 
 
 =head2 files
 
@@ -140,6 +165,13 @@ object, it is useful for other functions.
 
 Check files. This is the only function you will have to call from from your test script.
 
+=head2 just_check $text_dir, $data_dir [, $language = 'en_US'] [,  @files]
+
+Everything you need in a single function. The first directory will
+    include text and auxiliary directory files, the second main
+    dictionary and suffix files. By default all C<*.md> files will be
+    checked. Basically equivalent to the creation of an object followed by C<$ob->check()>  
+
 =head2 done_testing
 
 Called after all tests have been performed.
@@ -148,19 +180,29 @@ Called after all tests have been performed.
 
 Test::Text requires L<Text::Hunspell> and the 
 C<en_US> dictionnary for C<hunspell>, which you can install with
-C<sudo apt-get install hunspell-en-us> , but since I found no way of expressing this
+C<sudo apt-get install hunspell-en-us>, but since I found no way of expressing this
 dependency within Makefile.PL, I have added it to the C<data> dir,
-mainly. Latest version requires L<Test::Builder>.
+mainly. Latest version requires L<Test::Builder>. It also includes the
+    C<es> dictionnary in the latest version, also included. If you
+    need any other file, check previously that it's in the
+    C</usr/share/hunspell> dir, but since this module is mainly
+    intended to be used for CI, I had rather include these files in
+    the distro. 
 
 =head1 Development and bugs
 
-Development of this module is hosted at L<GitHub|http://github.com/JJ/Test-Text>. Use it for forking, bug reports, checking it out, whatever
+Development of this module is hosted at
+    L<GitHub|http://github.com/JJ/Test-Text>. Use it for forking, bug
+    reports, checking it out, giving stars, whatever. Use also the
+    CPAN interface if you want.
 
 =head1 SEE ALSO
 
-L<Manuel, the Marvelous Mechanical Man|https://www.amazon.com/Manuel-Magnificent-Mechanical-Logical-Natural-History-ebook/dp/B00ED084BK/ref=as_li_ss_til?tag=perltutobyjjmere&linkCode=w01&linkId=4PA3TNKRGGBZKHOE&creativeASIN=B00ED084BK>, the novel that spawned all this, or the other way around. 
-
-
+L<Manuel, the Marvelous Mechanical
+    Man|https://www.amazon.com/Manuel-Magnificent-Mechanical-Logical-Natural-History-ebook/dp/B00ED084BK/ref=as_li_ss_til?tag=perltutobyjjmere&linkCode=w01&linkId=4PA3TNKRGGBZKHOE&creativeASIN=B00ED084BK>,
+    the novel that spawned all this, or the other way around.  Check
+    out also L<Text::Hunspell>, an excellent interface to the
+    C<hunspell> spelling program.
 
 =head1 AUTHOR
 
