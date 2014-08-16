@@ -5,13 +5,13 @@ use strict;
 use utf8; # Files and dictionaries might use utf8
 
 use Carp;
-use File::Slurp 'read_file';
+use File::Slurp::Tiny 'read_file';
 use Text::Hunspell;
 use v5.14;
 
-use version; our $VERSION = qv('0.1.7'); # One that works
+use version; our $VERSION = qv('0.1.8'); # Bug-quashing
 
-use base 'Test::Builder::Module';
+use base 'Test::Builder::Module'; # Included in Test::Simple
 
 my $CLASS = __PACKAGE__;
 our @EXPORT= 'just_check';
@@ -75,7 +75,7 @@ sub just_check {
     my $dir = shift || croak "Need a directory with text" ;
     my $data_dir = shift || croak "No default spelling data directory\n";
     my $language = shift || "en_US"; # Defaults to English
-    my $tesxt = new Test::Text $dir, $data_dir, $language, @_;
+    my $tesxt = Test::Text->new($dir, $data_dir, $language, @_);
     $tesxt->check();
     $tesxt->done_testing;
 }
@@ -104,11 +104,11 @@ This document describes Test::Text version 0.1.7
     my $dir = "path/to/text_dir"; 
     my $data = "path/to/data_dir"; 
 
-    my $tesxt = new Test::Text $text_dir, $dict_dir; # Defaults to English: en_US and all files
+    my $tesxt = Test::Text->new($text_dir, $dict_dir); # Defaults to English: en_US and all files
 
-    $tesxt = new Test::Text $text_dir, $dict_dir, "en_US", $this_file, $that_file; # Tests only those files 
+    $tesxt = Test::Text->new($text_dir, $dict_dir, "en_US", $this_file, $that_file); # Tests only those files
 
-    $tesxt = new Test::Text $text_dir, $dict_dir, "es_ES"; # Uses alternate language 
+    $tesxt = Test::Text->new($text_dir, $dict_dir, "es_ES"); # Uses alternate language
 
     $testxt->check(); # spell-checks plain or markdown text in that dir or just passed
 
@@ -192,6 +192,12 @@ mainly. Latest version requires L<Test::Builder>. It also includes the
     intended to be used for CI, I had rather include these files in
     the distro. 
 
+If you use any language with heavy dependencies on UTF8 like Spanish,
+    the supplied dictionaries will be no use. Check the UTF
+    dictionaries available from SublimeText; even so, the Spanish
+    affix file yields warnings so you might want to use the version I
+    patched, available at the GitHub repo. 
+
 =head1 Development and bugs
 
 Development of this module is hosted at
@@ -211,6 +217,7 @@ L<Manuel, the Marvelous Mechanical
 
 JJ Merelo  C<< <jj@merelo.net> >>
 
+Gabor Szabo C<< <szabgab@cpan.org> >> has contributed many patches. And encouragement. 
 
 =head1 LICENCE AND COPYRIGHT
 

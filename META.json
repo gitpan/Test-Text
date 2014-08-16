@@ -4,7 +4,7 @@
       "JJ Merelo <jj@merelo.net>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "ExtUtils::MakeMaker version 6.64, CPAN::Meta::Converter version 2.132140",
+   "generated_by" : "ExtUtils::MakeMaker version 6.98, CPAN::Meta::Converter version 2.140640",
    "license" : [
       "open_source"
    ],
@@ -32,10 +32,8 @@
       },
       "runtime" : {
          "requires" : {
-            "Encode::Encoder" : "0",
-            "File::Slurp" : "0",
+            "File::Slurp::Tiny" : "0",
             "Test::More" : "0",
-            "Test::Output" : "1.03",
             "Test::Simple" : "1",
             "Text::Hunspell" : "2.08",
             "version" : "0"
@@ -43,5 +41,12 @@
       }
    },
    "release_status" : "stable",
-   "version" : "v0.1.7"
+   "resources" : {
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/JJ/Test-Text.git",
+         "web" : "https://github.com/JJ/Test-Text"
+      }
+   },
+   "version" : "v0.1.8"
 }

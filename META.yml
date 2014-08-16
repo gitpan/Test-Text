@@ -3,26 +3,26 @@ abstract: 'A module for testing text files for spelling and (maybe) more. '
 author:
   - 'JJ Merelo <jj@merelo.net>'
 build_requires:
-  ExtUtils::MakeMaker: 0
+  ExtUtils::MakeMaker: '0'
 configure_requires:
-  ExtUtils::MakeMaker: 0
+  ExtUtils::MakeMaker: '0'
 dynamic_config: 1
-generated_by: 'ExtUtils::MakeMaker version 6.64, CPAN::Meta::Converter version 2.132140'
+generated_by: 'ExtUtils::MakeMaker version 6.98, CPAN::Meta::Converter version 2.140640'
 license: open_source
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
-  version: 1.4
+  version: '1.4'
 name: Test-Text
 no_index:
   directory:
     - t
     - inc
 requires:
-  Encode::Encoder: 0
-  File::Slurp: 0
-  Test::More: 0
-  Test::Output: 1.03
-  Test::Simple: 1
-  Text::Hunspell: 2.08
-  version: 0
-version: v0.1.7
+  File::Slurp::Tiny: '0'
+  Test::More: '0'
+  Test::Simple: '1'
+  Text::Hunspell: '2.08'
+  version: '0'
+resources:
+  repository: https://github.com/JJ/Test-Text.git
+version: v0.1.8
